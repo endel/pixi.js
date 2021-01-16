@@ -39,53 +39,22 @@ export class BitmapFont
 {
     /**
      * This character set includes all the letters in the alphabet (both lower- and upper- case).
-     * @readonly
-     * @static
-     * @member {string[][]}
+     *
      * @example
      * BitmapFont.from("ExampleFont", style, { chars: BitmapFont.ALPHA })
      */
-    public static readonly ALPHA = [['a', 'z'], ['A', 'Z'], ' '];
+    public static readonly ALPHA: Array<string|string[]> = [['a', 'z'], ['A', 'Z'], ' '];
 
-    /**
-     * This character set includes all decimal digits (from 0 to 9).
-     * @readonly
-     * @static
-     * @member {string[][]}
-     * @example
-     * BitmapFont.from("ExampleFont", style, { chars: BitmapFont.NUMERIC })
-     */
-    public static readonly NUMERIC = [['0', '9']];
+    /** This character set includes all decimal digits (from 0 to 9). */
+    public static readonly NUMERIC: Array<string[]> = [['0', '9']];
 
-    /**
-     * This character set is the union of `BitmapFont.ALPHA` and `BitmapFont.NUMERIC`.
-     * @readonly
-     * @static
-     * @member {string[][]}
-     */
-    public static readonly ALPHANUMERIC = [['a', 'z'], ['A', 'Z'], ['0', '9'], ' '];
+    /** This character set is the union of `BitmapFont.ALPHA` and `BitmapFont.NUMERIC`. */
+    public static readonly ALPHANUMERIC: Array<string|string[]> = [['a', 'z'], ['A', 'Z'], ['0', '9'], ' '];
 
-    /**
-     * This character set consists of all the ASCII table.
-     * @readonly
-     * @static
-     * @member {string[][]}
-     * @see http://www.asciitable.com/
-     */
-    public static readonly ASCII = [[' ', '~']];
+    /** This character set consists of all the ASCII table. */
+    public static readonly ASCII: Array<string[]> = [[' ', '~']];
 
-    /**
-     * Collection of default options when using `BitmapFont.from`.
-     *
-     * @readonly
-     * @static
-     * @member {PIXI.IBitmapFontOptions}
-     * @property {number} resolution=1
-     * @property {number} textureWidth=512
-     * @property {number} textureHeight=512
-     * @property {number} padding=4
-     * @property {string|string[]|string[][]} chars = PIXI.BitmapFont.ALPHANUMERIC
-     */
+    /** Collection of default options when using `BitmapFont.from`. */
     public static readonly defaultOptions: IBitmapFontOptions = {
         resolution: 1,
         textureWidth: 512,
@@ -94,25 +63,25 @@ export class BitmapFont
         chars: BitmapFont.ALPHANUMERIC,
     };
 
-    /**
-     * Collection of available/installed fonts.
-     *
-     * @readonly
-     * @static
-     * @member {Object.<string, PIXI.BitmapFont>}
-     */
+    /** Collection of available/installed fonts. */
     public static readonly available: Dict<BitmapFont> = {};
+
+    /** The name of the font face. */
     public readonly font: string;
+
+    /** The size of the font face in pixels. */
     public readonly size: number;
+
+    /** The line-height of the font face in pixels. */
     public readonly lineHeight: number;
+
+    /** The map of characters by character code. */
     public readonly chars: Dict<IBitmapFontCharacter>;
+
+    /** The map of base page textures (i.e., sheets of glyphs). */
     public readonly pageTextures: Dict<Texture>;
 
-    /**
-     * @param {PIXI.BitmapFontData} data
-     * @param {PIXI.Texture[]|Object.<string, PIXI.Texture>} textures
-     */
-    constructor(data: BitmapFontData, textures: Texture[]|Dict<Texture>)
+    public constructor(data: BitmapFontData, textures: Texture[]|Dict<Texture>)
     {
         const [info] = data.info;
         const [common] = data.common;
@@ -120,45 +89,10 @@ export class BitmapFont
         const res = getResolutionOfUrl(page.file);
         const pageTextures: Dict<Texture> = {};
 
-        /**
-         * The name of the font face.
-         *
-         * @member {string}
-         * @readonly
-         */
         this.font = info.face;
-
-        /**
-         * The size of the font face in pixels.
-         *
-         * @member {number}
-         * @readonly
-         */
         this.size = info.size;
-
-        /**
-         * The line-height of the font face in pixels.
-         *
-         * @member {number}
-         * @readonly
-         */
         this.lineHeight = common.lineHeight / res;
-
-        /**
-         * The map of characters by character code.
-         *
-         * @member {object}
-         * @readonly
-         */
         this.chars = {};
-
-        /**
-         * The map of base page textures (i.e., sheets of glyphs).
-         *
-         * @member {object}
-         * @readonly
-         * @private
-         */
         this.pageTextures = pageTextures;
 
         // Convert the input Texture, Textures or object
@@ -243,17 +177,7 @@ export class BitmapFont
         (this as any).pageTextures = null;
     }
 
-    /**
-     * Register a new bitmap font.
-     *
-     * @static
-     * @param {XMLDocument|string|PIXI.BitmapFontData} data - The
-     *        characters map that could be provided as xml or raw string.
-     * @param {Object.<string, PIXI.Texture>|PIXI.Texture|PIXI.Texture[]}
-     *        textures - List of textures for each page.
-     * @return {PIXI.BitmapFont} Result font object with font, size, lineHeight
-     *         and char fields.
-     */
+    /** Register a new bitmap font. */
     public static install(
         data: string|XMLDocument|BitmapFontData,
         textures: Texture|Texture[]|Dict<Texture>
@@ -290,12 +214,7 @@ export class BitmapFont
         return font;
     }
 
-    /**
-     * Remove bitmap font by name.
-     *
-     * @static
-     * @param {string} name
-     */
+    /** Remove bitmap font by name. */
     public static uninstall(name: string): void
     {
         const font = BitmapFont.available[name];
@@ -331,18 +250,6 @@ export class BitmapFont
      * - {@link PIXI.TextStyle#strokeThickness|strokeThickness}
      * - {@link PIXI.TextStyle#textBaseline|textBaseline}
      *
-     * @param {string} name - The name of the custom font to use with BitmapText.
-     * @param {object|PIXI.TextStyle} [style] - Style options to render with BitmapFont.
-     * @param {PIXI.IBitmapFontOptions} [options] - Setup options for font or name of the font.
-     * @param {string|string[]|string[][]} [options.chars=PIXI.BitmapFont.ALPHANUMERIC] - characters included
-     *      in the font set. You can also use ranges. For example, `[['a', 'z'], ['A', 'Z'], "!@#$%^&*()~{}[] "]`.
-     *      Don't forget to include spaces ' ' in your character set!
-     * @param {number} [options.resolution=1] - Render resolution for glyphs.
-     * @param {number} [options.textureWidth=512] - Optional width of atlas, smaller values to reduce memory.
-     * @param {number} [options.textureHeight=512] - Optional height of atlas, smaller values to reduce memory.
-     * @param {number} [options.padding=4] - Padding between glyphs on texture atlas.
-     * @return {PIXI.BitmapFont} Font generated by style options.
-     * @static
      * @example
      * PIXI.BitmapFont.from("TitleFont", {
      *     fontFamily: "Arial",
@@ -518,13 +425,3 @@ export class BitmapFont
         return font;
     }
 }
-
-/**
- * @memberof PIXI
- * @interface IBitmapFontOptions
- * @property {string | string[] | string[][]} [chars=PIXI.BitmapFont.ALPHANUMERIC] - the character set to generate
- * @property {number} [resolution=1] - the resolution for rendering
- * @property {number} [padding=4] - the padding between glyphs in the atlas
- * @property {number} [textureWidth=512] - the width of the texture atlas
- * @property {number} [textureHeight=512] - the height of the texture atlas
- */
